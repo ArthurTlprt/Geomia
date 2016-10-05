@@ -1,41 +1,37 @@
-doctype html
-html
-  head
-    meta(charset='UTF-8')
-    title Particules
-    script(src='javascripts/jquery.min.js')
-    script(src='javascripts/canvas.js')
-    script(src='javascripts/Particule.js')
-    script(src='javascripts/field.js')
-    link(rel='stylesheet', href='http://yui.yahooapis.com/pure/0.6.0/pure-min.css')
-    link(rel='stylesheet', href='/stylesheets/style.css')
-  body
-    .pure-g
-      .pure-u-21-24
-        canvas#mon_canvas(width='1340', height='640')
-          | Message pour les navigateurs ne supportant pas encore canvas.
-      .pure-u-3-24
-        .pure-menu.custom-restricted-width
-          span.pure-menu-heading Add particule
-          ul.pure-menu-list
-            li.pure-menu-item
-              a.pure-menu-link(onclick='addPartPos(); return false;') P+
-            li.pure-menu-item
-              a.pure-menu-link(onclick='addPartNeg(); return false;') P-
-            li.pure-menu-item
-              a.pure-menu-link(onclick='addPart(); return false;') 25 prt
-        script(type='text/javascript').
-          function addPartPos(){
-            particules.push(new Particule(Math.random() * canvas.width, Math.random() * canvas.height, 0, -0, '#da3c2b', 0.5));
-          }
+extends layout.pug
+block content
+  .pure-g
+    .pure-u-21-24
+      script(src='javascripts/jquery.min.js')
+      script(src='javascripts/canvas.js')
+      script(src='javascripts/Particule.js')
+      script(src='javascripts/field.js')
+      canvas#mon_canvas(width='1340', height='640')
+        | Message pour les navigateurs ne supportant pas encore canvas.
+    .pure-u-3-24
+      br
+      br
+      .pure-menu.custom-restricted-width
+        span.pure-menu-heading Add particule
+        ul.pure-menu-list
+          li.pure-menu-item
+            a.pure-menu-link(onclick='addPartPos(); return false;') P+
+          li.pure-menu-item
+            a.pure-menu-link(onclick='addPartNeg(); return false;') P-
+          li.pure-menu-item
+            a.pure-menu-link(onclick='addPart(); return false;') 25 prt
+      script(type='text/javascript').
+        function addPartPos(){
+          particules.push(new Particule(Math.random() * canvas.width, Math.random() * canvas.height, 0, -0, '#da3c2b', 0.5));
+        }
 
-          function addPartNeg(){
+        function addPartNeg(){
+          particules.push(new Particule(Math.random() * canvas.width, Math.random() * canvas.height, 0, -0, '#526eae', -0.5));
+        }
+
+        function addPart(){
+          for(var i=0; i < 10; i++){
+            particules.push(new Particule(Math.random() * canvas.width, Math.random() * canvas.height, 0, -0, '#da3c2b', 0.5));
             particules.push(new Particule(Math.random() * canvas.width, Math.random() * canvas.height, 0, -0, '#526eae', -0.5));
           }
-
-          function addPart(){
-            for(var i=0; i < 10; i++){
-              particules.push(new Particule(Math.random() * canvas.width, Math.random() * canvas.height, 0, -0, '#da3c2b', 0.5));
-              particules.push(new Particule(Math.random() * canvas.width, Math.random() * canvas.height, 0, -0, '#526eae', -0.5));
-            }
-          }
+        }

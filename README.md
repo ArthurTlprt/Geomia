@@ -1,6 +1,6 @@
 # Geomia
 
-Le but est de créer une interface permettant à l'utilisateur de créer ses propres sytsèmes gravitationnels.
+Le but est de construire une interface permettant à l'utilisateur de créer ses propres systèmes gravitationnels.
 
 # Prendre part au projet:
 
@@ -11,4 +11,4 @@ La bibliothèque utilisée pour le rendu 3D est [Three.js](https://threejs.org/)
 ```bash
 npm start
 ```
-Puis se rendre à l'adresse [localhost:3000](localhost:3000)
+Puis se rendre à l'adresse [localhost:3000](http://localhost:3000/)
