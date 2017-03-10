@@ -2,6 +2,8 @@ window.onload = function()
 {
   canvas = initCanvas(document);
   context = initContext(document);
+  console.log($(window).width());
+  $('#mon_canvas').width($(window).width()).height($(window).height);
 
   /**
    * Le but est de simuler les forces de coulombs
@@ -9,10 +11,10 @@ window.onload = function()
    */
 
   particules = [
-    new Particule(500, 500, 0, -0, '#da3c2b', 0.5),
-    new Particule(400, 500, 0, -0, '#da3c2b', 0.5),
-    new Particule(500, 400, 0, -0, '#526eae', -0.5),
-    new Particule(200, 200, 0, 0, '#526eae', -0.5)
+    // new Particule(500, 500, 0, -0, '#da3c2b', 0.5),
+    // new Particule(400, 500, 0, -0, '#da3c2b', 0.5),
+    // new Particule(500, 400, 0, -0, '#526eae', -0.5),
+    // new Particule(200, 200, 0, 0, '#526eae', -0.5)
   ];
 
   var mouse_x, mouse_y;
