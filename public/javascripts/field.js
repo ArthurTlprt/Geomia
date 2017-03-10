@@ -19,7 +19,6 @@ window.onload = function()
 
   var mouse_x, mouse_y;
 
-
   function main(){
 
     context.beginPath();
@@ -30,14 +29,16 @@ window.onload = function()
       particules[i].display(context, canvas);
     }
 
-
     setTimeout(main, 15);
   }
+
+
 
   $("body").mousemove(function(e) {
     mouse_x = e.pageX;
     mouse_y = e.pageY;
   })
+
 
   main();
 

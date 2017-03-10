@@ -6,7 +6,7 @@ block content
       script(src='javascripts/canvas.js')
       script(src='javascripts/Particule.js')
       script(src='javascripts/field.js')
-      canvas#mon_canvas(width='1340', height='640')
+      canvas#mon_canvas(width='1340', height='640', onclick='LeftClick(event);' , oncontextmenu='RightClick(event); return false;')
         | Message pour les navigateurs ne supportant pas encore canvas.
     .pure-u-3-24
       br
@@ -21,9 +21,35 @@ block content
           li.pure-menu-item
             a.pure-menu-link(onclick='addPart(); return false;') 25 prt
       script(type='text/javascript').
+
         function addPartPos(){
           particules.push(new Particule(Math.random() * canvas.width, Math.random() * canvas.height, 0, -0, '#da3c2b', 0.5));
         }
+
+        function addPartXyP(x, y){
+           particules.push(new Particule(x, y, 0, -0, '#da3c2b', 0.5));
+        }
+
+        function addPartXyN(x, y){
+           particules.push(new Particule(x, y, 0, -0, '#526eae', -0.5));
+        }
+
+        function LeftClick(event) {
+           var posX;
+           var posY;
+           posX = event.clientX;
+           posY = event.clientY;
+           addPartXyP(posX,posY)
+        }
+
+        function RightClick(event){
+           var posX;
+           var posY;
+           posX = event.clientX;
+           posY = event.clientY;
+           addPartXyN(posX,posY); 
+           return(false);
+         }
 
         function addPartNeg(){
           particules.push(new Particule(Math.random() * canvas.width, Math.random() * canvas.height, 0, -0, '#526eae', -0.5));
