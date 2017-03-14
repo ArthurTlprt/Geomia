@@ -2,7 +2,7 @@ window.onload = function()
 {
 	planets = [
     new Planet(0, 0, 0, 0, 0, 0, sun, 0.15),
-    new Planet(30, 30, 30, 0, 0, 0, earth, 0.05),
+    new Planet(30, 30, 30, 0, 1, 0, earth, 0.05),
 
   ];
 }
@@ -31,9 +31,9 @@ scene.add( sun );
 var earth_geometry = new THREE.SphereGeometry( 2, 32, 32 );
 var earth_material = new THREE.MeshPhongMaterial({ map: loader.load('./images/earthmap.jpg',THREE.SphericalRefractionMapping) });
 var earth = new THREE.Mesh( earth_geometry, earth_material );
-earth.position.x = 10;
-earth.position.y = 10;
-earth.position.z = 10;
+earth.position.x = 30;
+earth.position.y = 30;
+earth.position.z = 30;
 scene.add( earth );
 
 var moon_geometry = new THREE.SphereGeometry( 2, 32, 32 );
@@ -42,6 +42,16 @@ var moon = new THREE.Mesh( moon_geometry, moon_material );
 //scene.add( moon );
 
 var theta = 0;
+
+function Collision(S1, S2) {
+   var d2 = (S1.position.x-S2.position.x)*(S1.position.x-S2.position.x) + (S1.position.y-S2.position.y)*(S1.position.y-S2.position.y) + (S1.position.z-S2.position.z)*(S1.position.z-S2.position.z);
+   if (d2 > (S1.geometry.vertices[0].y + S2.geometry.vertices[0].y)*(S1.geometry.vertices[0].y + S2.geometry.vertices[0].y)) {
+      return false;
+    } else {
+      return true;
+    }
+}
+
 var render = function () {
 	requestAnimationFrame( render );
 
@@ -58,7 +68,11 @@ var render = function () {
 	moon.position.z = 50 * Math.sin(theta);
 	*/
 
-	console.log(planets);
+	if (Collision(earth, sun)){
+		scene.remove(earth);
+		delete planets[1];
+		console.log("Collision!! ");
+	}
 
 	for(var i in planets){
       planets[i].update(planets);
@@ -85,8 +99,15 @@ break;
 case 40 : //down arrow
 camera.position.z = camera.position.z + delta;
 break;
+case 90 : //z 
+camera.position.y = camera.position.y + delta;
+break;
+case 83 : //s
+camera.position.y = camera.position.y + delta;
+break;
 }
 }
+
 
 
 function onMouseMove(event) {
