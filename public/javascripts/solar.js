@@ -68,13 +68,13 @@ var render = function () {
 	moon.position.z = 50 * Math.sin(theta);
 	*/
 
-	if (Collision(earth, sun)){
+
+	for(var i in planets){
+		if (Collision(earth, sun)){
 		scene.remove(earth);
 		delete planets[1];
 		console.log("Collision!! ");
 	}
-
-	for(var i in planets){
       planets[i].update(planets);
     }
 
