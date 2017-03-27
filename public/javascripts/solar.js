@@ -15,11 +15,22 @@ var renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
+
 var light = new THREE.AmbientLight( '#FCD440', 3 );
 light.position.set( 100, 0, 0 );
 scene.add( light );
 
 var loader = new THREE.TextureLoader();
+
+var textureCube = new THREE.CubeTextureLoader()
+.setPath( './images/')
+.load( [ 'skymap_posx_1024x1024.jpg', 'skymap_negx_1024x1024.jpg', 'skymap_posy_1024x1024.jpg', 'skymap_negy_1024x1024.jpg', 'skymap_posz_1024x1024.jpg', 'skymap_negz_1024x1024.jpg' ] );
+
+scene = new THREE.Scene();
+scene.background = textureCube;
+
+
+
 var sun_geometry = new THREE.SphereGeometry( 10, 32, 32 );
 var sun_material = new THREE.MeshPhongMaterial({ map: loader.load('./images/sunmap.jpg',THREE.SphericalRefractionMapping) });
 var sun = new THREE.Mesh( sun_geometry, sun_material );
@@ -28,7 +39,7 @@ sun.position.y = 0;
 sun.position.z = 0;
 scene.add( sun );
 
-var earth_geometry = new THREE.SphereGeometry( 2, 32, 32 );
+var earth_geometry = new THREE.SphereGeometry( 1, 32, 32 );
 var earth_material = new THREE.MeshPhongMaterial({ map: loader.load('./images/earthmap.jpg',THREE.SphericalRefractionMapping) });
 var earth = new THREE.Mesh( earth_geometry, earth_material );
 earth.position.x = 30;
@@ -41,7 +52,16 @@ var moon_material = new THREE.MeshPhongMaterial({ map: loader.load('./images/ear
 var moon = new THREE.Mesh( moon_geometry, moon_material );
 //scene.add( moon );
 
+var markSize = 0.3; // Tweak this to set marker size
+
+var markGeom = new THREE.BoxGeometry(markSize, markSize, markSize, 1, 1, 1);
+var markMat = new THREE.MeshBasicMaterial({color: "grey"});
+
 var theta = 0;
+
+
+	var axisHelper = new THREE.AxisHelper( 5 );
+scene.add( axisHelper );
 
 function Collision(S1, S2) {
    var d2 = (S1.position.x-S2.position.x)*(S1.position.x-S2.position.x) + (S1.position.y-S2.position.y)*(S1.position.y-S2.position.y) + (S1.position.z-S2.position.z)*(S1.position.z-S2.position.z);
@@ -52,22 +72,18 @@ function Collision(S1, S2) {
     }
 }
 
+
 var render = function () {
 	requestAnimationFrame( render );
 
-	//theta += 0.005
-	/*
-	earth.rotation.z += 0.01;
-	earth.position.x = 40 * Math.cos(theta);
-	earth.position.y = 10 * Math.sin(theta);
-	earth.position.z = 30 * Math.sin(theta);
 
-	moon.rotation.z += 0.01;
-	moon.position.x = 60 * Math.cos(theta);
-	moon.position.y = 30 * Math.sin(theta);
-	moon.position.z = 50 * Math.sin(theta);
-	*/
+	  var marker = new THREE.Mesh(markGeom.clone(), markMat);
+    marker.position.copy(earth.position);
 
+    // Display position!
+    scene.add(marker);
+
+    // Keep simulation going
 
 	for(var i in planets){
 		if (Collision(earth, sun)){
@@ -80,6 +96,8 @@ var render = function () {
 
 	document.addEventListener('mousemove', onMouseMove, false);
 	document.addEventListener('keydown',onDocumentKeyDown,false);
+	renderer.autoClear = false;
+renderer.clear();
 	renderer.render(scene, camera);
 };
 
@@ -103,10 +121,13 @@ case 90 : //z
 camera.position.y = camera.position.y + delta;
 break;
 case 83 : //s
-camera.position.y = camera.position.y + delta;
+camera.position.y = camera.position.y - delta;
 break;
 }
 }
+
+
+
 
 
 
@@ -120,3 +141,17 @@ function onMouseMove(event) {
 	camera.lookAt(scene.position);
 }
 render();
+
+
+
+
+
+
+
+
+
+
+
+
+
+

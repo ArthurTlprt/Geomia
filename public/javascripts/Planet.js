@@ -21,6 +21,10 @@ class Planet {
 
   }
 
+  getLinearVelocity() {
+    return this.vx+this.vy+this.vz;
+  }
+
   updateForces(planets){
     this.forces = [];
     var dist = 0;
