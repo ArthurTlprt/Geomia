@@ -8,6 +8,12 @@ window.onload = function()
 }
 
 var scene = new THREE.Scene();
+var textureCube = new THREE.CubeTextureLoader()
+.setPath( './images/')
+.load( [ 'skymap_posx_1024x1024.jpg', 'skymap_negx_1024x1024.jpg', 'skymap_posy_1024x1024.jpg', 'skymap_negy_1024x1024.jpg', 'skymap_posz_1024x1024.jpg', 'skymap_negz_1024x1024.jpg' ] );
+
+scene = new THREE.Scene();
+
 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 camera.position.z = 50;
 
@@ -16,18 +22,37 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
 
+
 var light = new THREE.AmbientLight( '#FCD440', 3 );
 light.position.set( 100, 0, 0 );
 scene.add( light );
 
+
+
 var loader = new THREE.TextureLoader();
-
-var textureCube = new THREE.CubeTextureLoader()
-.setPath( './images/')
-.load( [ 'skymap_posx_1024x1024.jpg', 'skymap_negx_1024x1024.jpg', 'skymap_posy_1024x1024.jpg', 'skymap_negy_1024x1024.jpg', 'skymap_posz_1024x1024.jpg', 'skymap_negz_1024x1024.jpg' ] );
-
-scene = new THREE.Scene();
 scene.background = textureCube;
+
+/*
+var spotLight = new THREE.SpotLight( 0xffffff );
+spotLight.position.set( -30, -30, -30);
+
+spotLight.castShadow = true;
+
+spotLight.shadow.mapSize.width = 1024;
+spotLight.shadow.mapSize.height = 1024;
+
+spotLight.shadow.camera.near = 500;
+spotLight.shadow.camera.far = 4000;
+spotLight.shadow.camera.fov = 30;
+
+scene.add( spotLight );
+*/
+
+var controls;
+
+
+controls = new THREE.OrbitControls( camera );
+
 
 
 
@@ -59,9 +84,11 @@ var markMat = new THREE.MeshBasicMaterial({color: "grey"});
 
 var theta = 0;
 
+controls.autoRotate = false;
 
-	var axisHelper = new THREE.AxisHelper( 5 );
-scene.add( axisHelper );
+// Dessin des 3 axes
+//var axisHelper = new THREE.AxisHelper( 5 );
+//scene.add( axisHelper );
 
 function Collision(S1, S2) {
    var d2 = (S1.position.x-S2.position.x)*(S1.position.x-S2.position.x) + (S1.position.y-S2.position.y)*(S1.position.y-S2.position.y) + (S1.position.z-S2.position.z)*(S1.position.z-S2.position.z);
@@ -77,13 +104,11 @@ var render = function () {
 	requestAnimationFrame( render );
 
 
-	  var marker = new THREE.Mesh(markGeom.clone(), markMat);
+	var marker = new THREE.Mesh(markGeom.clone(), markMat);
     marker.position.copy(earth.position);
 
-    // Display position!
+    // Display position of earth!
     scene.add(marker);
-
-    // Keep simulation going
 
 	for(var i in planets){
 		if (Collision(earth, sun)){
@@ -92,16 +117,25 @@ var render = function () {
 		console.log("Collision!! ");
 	}
       planets[i].update(planets);
+
     }
+    
 
-	document.addEventListener('mousemove', onMouseMove, false);
-	document.addEventListener('keydown',onDocumentKeyDown,false);
+	//document.addEventListener('mousemove', onMouseMove, false);
+	//document.addEventListener('keydown',onDocumentKeyDown,false);
+
 	renderer.autoClear = false;
-renderer.clear();
-	renderer.render(scene, camera);
-};
+	renderer.clear();
 
-function onDocumentKeyDown(event) {
+	//camera.position.set(sun.position.x,camera.position.y,camera.position.z); TODO: reussi a gerer la position de camera par rapport au focus
+	controls.target.set(sun.position.x, sun.position.y, sun.position.z); // On vise le soleil par exemple
+	renderer.render(scene, camera);
+	//controls.update()
+};
+render();
+
+
+/*function onDocumentKeyDown(event) {
 	var delta = 5;
 	var keycode = event.keyCode;
 	switch(keycode){
@@ -124,23 +158,18 @@ case 83 : //s
 camera.position.y = camera.position.y - delta;
 break;
 }
-}
-
-
-
-
+}*/
 
 
 function onMouseMove(event) {
-	var mouseX = event.clientX - window.innerWidth/2;
+	/*var mouseX = event.clientX - window.innerWidth/2;
 	var mouseY = event.clientY - window.innerHeight/2;
 	//var mouseZ = event.clientZ - window.innerHeight/2;
 	camera.position.x += mouseX * 0.5 - camera.position.x;
 	camera.position.y += mouseY * 0.5 - camera.position.y;
 	//camera.position.z += mouseZ * 0.06 - camera.position.z;
-	camera.lookAt(scene.position);
+	camera.lookAt(scene.position);*/
 }
-render();
 
 
 
