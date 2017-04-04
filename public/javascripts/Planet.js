@@ -21,12 +21,16 @@ class Planet {
 
   }
 
+  getLinearVelocity() {
+    return this.vx+this.vy+this.vz;
+  }
+
   updateForces(planets){
     this.forces = [];
     var dist = 0;
     for(var i in planets){
       if(this != planets[i]){
-        dist = Math.pow( this.x - planets[i].x, 2) + Math.pow( this.y - planets[i].y, 2);
+        dist = Math.pow( this.x - planets[i].x, 2) + Math.pow( this.y - planets[i].y, 2) + Math.pow( this.z - planets[i].z, 2);
         if(dist == 0){ dist = 0.00001 };
         this.forces.push(
           {x: (this.ke * this.m * planets[i].m * (this.x - planets[i].x))/dist,
