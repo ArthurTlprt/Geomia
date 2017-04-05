@@ -2,7 +2,7 @@ window.onload = function()
 {
 	planets = [
     new Planet(0, 0, 0, 0, 0, 0, sun, 0.15),
-    new Planet(30, 30, 30, 0, 1, 0, earth, 0.05),
+    new Planet(30, 30, 30, 0, 1, 0, containerEarth, 0.05),
 
   ];
 }
@@ -22,15 +22,30 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
 
-var light = new THREE.AmbientLight( '#FCD440', 3 );
-//var light = new THREE.PointLight(0xFFFFFF);
-light.position.set( 0, 0, 0 );
-scene.add( light );
+// lumière globale
+var light	= new THREE.AmbientLight( 0x222222 )
+scene.add( light )
 
+var light	= new THREE.DirectionalLight( 0xffffff, 1 )
+light.position.set(5,5,5)
+scene.add( light )
+	light.castShadow	= true
+	light.shadow.cameraNear	= 0.01
+	light.shadow.cameraFar	= 15
+	light.shadow.cameraFov	= 45
+	light.shadow.cameraLeft	= -1
+	light.shadow.cameraRight	=  1
+	light.shadow.cameraTop	=  1
+	light.shadow.cameraBottom= -1
+	light.shadow.bias	= 0.001
+	light.shadow.darkness	= 0.2
+	light.shadow.mapWidth	= 1024
+	light.shadow.mapHeight	= 1024
 
 
 var loader = new THREE.TextureLoader();
 scene.background = textureCube;
+var onRenderFcts= [];
 
 /*
 var spotLight = new THREE.SpotLight( 0xffffff );
@@ -64,38 +79,75 @@ sun.position.y = 0;
 sun.position.z = 0;
 scene.add( sun );
 
-
-var earth_geometry   = new THREE.SphereGeometry(1, 32, 32)
+/*
+var earth_geometry   = new THREE.SphereGeometry(1, 32, 32);
+var textureloader = new THREE.TextureLoader();
 var earth_material  = new THREE.MeshPhongMaterial();
-earth_material.map    = THREE.ImageUtils.loadTexture('./images/earth_map_2048x1024.jpg');
-earth_material.bumpMap    = THREE.ImageUtils.loadTexture('./earth_bump_2048x1024.jpg');
-earth_material.bumpScale = 0.05
-earth_material.specularMap    = THREE.ImageUtils.loadTexture('./images/earth_specular_2048x1024.jpg')
-earth_material.specular  = new THREE.Color('grey')
-var canvasCloud = THREE.ImageUtils.loadTexture('./images/earth_clouds_2048x1024.jpg');
 var earth = new THREE.Mesh( earth_geometry, earth_material );
-var geometry   = new THREE.SphereGeometry(10.01, 32, 32)
+earth.material.map    = textureloader.load('./images/earth_map_2048x1024.jpg');
+earth.material.bumpMap    = textureloader.load('./images/earth_bump_2048x1024.jpg');
+earth.material.bumpScale = 0.05
+earth.material.specularMap = textureloader.load('./images/earth_specular_2048x1024.jpg');
+earth.material.specular  = new THREE.Color('grey');
+earth.receiveShadow	= true;
+earth.castShadow	= true;
+scene.add(earth);
+*/
 
-var material  = new THREE.MeshPhongMaterial({
-  map     : new THREE.Texture(canvasCloud),
-  side        : THREE.DoubleSide,
-  opacity     : 0.8,
-  transparent : true,
-  depthWrite  : false,
-})
-var cloudMesh = new THREE.Mesh(geometry, material)
-earth.add(cloudMesh)
+	var containerEarth	= new THREE.Object3D()
+	containerEarth.rotateZ(-23.4 * Math.PI/180)
+	containerEarth.position.x = 30;
+	containerEarth.position.y = 30;
+	containerEarth.position.z = 30;
+	scene.add(containerEarth)
+	
+	var earth	= THREEx.Planets.createEarth()
+
+	earth.receiveShadow	= true
+	earth.castShadow	= true
+	containerEarth.add(earth)
+
+	onRenderFcts.push(function(delta, now){
+		earth.rotation.y += 1/32 * delta;		
+	})
+	var geometry	= new THREE.SphereGeometry(1, 32, 32)
+	var material	= THREEx.createAtmosphereMaterial()
+	material.uniforms.glowColor.value.set(0x00b3ff)
+	material.uniforms.coeficient.value	= 0.8
+	material.uniforms.power.value		= 2.0
+	var mesh	= new THREE.Mesh(geometry, material );
+	mesh.scale.multiplyScalar(1.01);
+
+	containerEarth.add( mesh );
 
 
-earth.position.x = 30;
-earth.position.y = 30;
-earth.position.z = 30;
+	var geometry	= new THREE.SphereGeometry(1, 32, 32)
+	var material	= THREEx.createAtmosphereMaterial()
+	material.uniforms.glowColor.value.set(0x00b3ff)
+	material.uniforms.coeficient.value	= 0.8
+	material.uniforms.power.value		= 2.0
+	var mesh	= new THREE.Mesh(geometry, material );
 
-scene.add(earth)
-
-
-
-
+	containerEarth.add( mesh );
+	// new THREEx.addAtmosphereMaterial2DatGui(material, datGUI)
+	var geometry	= new THREE.SphereGeometry(1, 32, 32)
+	var material	= THREEx.createAtmosphereMaterial()
+	material.side	= THREE.BackSide
+	material.uniforms.glowColor.value.set(0x00b3ff)
+	material.uniforms.coeficient.value	= 0.5
+	material.uniforms.power.value		= 4.0
+	var mesh	= new THREE.Mesh(geometry, material );
+	mesh.scale.multiplyScalar(1.15);
+    
+	containerEarth.add( mesh );
+	// new THREEx.addAtmosphereMaterial2DatGui(material, datGUI)
+	var earthCloud	= THREEx.Planets.createEarthCloud()
+	earthCloud.receiveShadow	= true
+	earthCloud.castShadow	= true
+	containerEarth.add(earthCloud)
+	onRenderFcts.push(function(delta, now){
+		earthCloud.rotation.y += 1/8 * delta;		
+	})
 
 
 
@@ -112,9 +164,9 @@ earth.position.z = 30;
 scene.add( earth );
 */
 
-var moon_geometry = new THREE.SphereGeometry( 2, 32, 32 );
-var moon_material = new THREE.MeshPhongMaterial({ map: loader.load('./images/earthmap.jpg',THREE.SphericalRefractionMapping) });
-var moon = new THREE.Mesh( moon_geometry, moon_material );
+//var moon_geometry = new THREE.SphereGeometry( 2, 32, 32 );
+//var moon_material = new THREE.MeshPhongMaterial({ map: loader.load('./images/earthmap.jpg',THREE.SphericalRefractionMapping) });
+//var moon = new THREE.Mesh( moon_geometry, moon_material );
 //scene.add( moon );
 
 var markSize = 0.3; // Tweak this to set marker size
@@ -145,30 +197,31 @@ var render = function () {
 
 
 	var marker = new THREE.Mesh(markGeom.clone(), markMat);
-    marker.position.copy(earth.position);
+    marker.position.copy(containerEarth.position);
 
     // Display position of earth!
     scene.add(marker);
 
 	for(var i in planets){
-		if (Collision(earth, sun)){
-		scene.remove(earth);
-		delete planets[1];
-		console.log("Collision!! ");
-	}
+
+		// TODO: collision
+		//if (Collision(containerEarth, sun)){
+		//scene.remove(earth);
+		//delete planets[1];
+		//console.log("Collision!! ");
+		//}
+
       planets[i].update(planets);
+
 
     }
     
-
-	//document.addEventListener('mousemove', onMouseMove, false);
-	//document.addEventListener('keydown',onDocumentKeyDown,false);
 
 	renderer.autoClear = false;
 	renderer.clear();
 
 	//camera.position.set(sun.position.x,camera.position.y,camera.position.z); TODO: reussi a gerer la position de camera par rapport au focus
-	controls.target.set(sun.position.x, sun.position.y, sun.position.z); // On vise le soleil par exemple
+	controls.target.set(containerEarth.position.x, containerEarth.position.y, containerEarth.position.z); // On vise le soleil par exemple
 	renderer.render(scene, camera);
 	//controls.update()
 };
