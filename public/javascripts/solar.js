@@ -22,9 +22,9 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
 
-
 var light = new THREE.AmbientLight( '#FCD440', 3 );
-light.position.set( 100, 0, 0 );
+//var light = new THREE.PointLight(0xFFFFFF);
+light.position.set( 0, 0, 0 );
 scene.add( light );
 
 
@@ -64,6 +64,45 @@ sun.position.y = 0;
 sun.position.z = 0;
 scene.add( sun );
 
+
+var earth_geometry   = new THREE.SphereGeometry(1, 32, 32)
+var earth_material  = new THREE.MeshPhongMaterial();
+earth_material.map    = THREE.ImageUtils.loadTexture('./images/earth_map_2048x1024.jpg');
+earth_material.bumpMap    = THREE.ImageUtils.loadTexture('./earth_bump_2048x1024.jpg');
+earth_material.bumpScale = 0.05
+earth_material.specularMap    = THREE.ImageUtils.loadTexture('./images/earth_specular_2048x1024.jpg')
+earth_material.specular  = new THREE.Color('grey')
+var canvasCloud = THREE.ImageUtils.loadTexture('./images/earth_clouds_2048x1024.jpg');
+var earth = new THREE.Mesh( earth_geometry, earth_material );
+var geometry   = new THREE.SphereGeometry(10.01, 32, 32)
+
+var material  = new THREE.MeshPhongMaterial({
+  map     : new THREE.Texture(canvasCloud),
+  side        : THREE.DoubleSide,
+  opacity     : 0.8,
+  transparent : true,
+  depthWrite  : false,
+})
+var cloudMesh = new THREE.Mesh(geometry, material)
+earth.add(cloudMesh)
+
+
+earth.position.x = 30;
+earth.position.y = 30;
+earth.position.z = 30;
+
+scene.add(earth)
+
+
+
+
+
+
+
+
+
+
+/*
 var earth_geometry = new THREE.SphereGeometry( 1, 32, 32 );
 var earth_material = new THREE.MeshPhongMaterial({ map: loader.load('./images/earthmap.jpg',THREE.SphericalRefractionMapping) });
 var earth = new THREE.Mesh( earth_geometry, earth_material );
@@ -71,6 +110,7 @@ earth.position.x = 30;
 earth.position.y = 30;
 earth.position.z = 30;
 scene.add( earth );
+*/
 
 var moon_geometry = new THREE.SphereGeometry( 2, 32, 32 );
 var moon_material = new THREE.MeshPhongMaterial({ map: loader.load('./images/earthmap.jpg',THREE.SphericalRefractionMapping) });
@@ -170,17 +210,3 @@ function onMouseMove(event) {
 	//camera.position.z += mouseZ * 0.06 - camera.position.z;
 	camera.lookAt(scene.position);*/
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
